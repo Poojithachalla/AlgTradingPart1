@@ -210,20 +210,40 @@ public void addOrder(Order order) {
 	  
   }
   
-  public void updateOrder(int order_id , int quantity , double price  ) throws SQLException{
-	  
+  @SuppressWarnings("resource")
+public void updateOrder(int order_id , int quantity , double price  ) throws SQLException{
+	  Order order = new Order();
+	  int priority_queue = 0;
 	  Connection connection = null;
 	    PreparedStatement statement4 = null;
 	    int updateorder = 0;
-	    String sql = "update orders set quantity=?,price=? where order_id=?";
-;
+	    String sql = "update orders set quantity=?,price=?,priority_queue=? where order_id=?";
+	    
+
 	    try {
 		    orderDAO.loadDriver(orderDAO.dbDriver);
 		     connection = orderDAO.getConnection();
+		      statement4 = connection.prepareStatement("SELECT max(priority_queue) FROM Orders");
+		      ResultSet rs = statement4.executeQuery();
+		      if (rs.next()) {
+		        priority_queue = rs.getInt(1);
+		        
+
+		        if (priority_queue == 0) {
+		          priority_queue = 1;
+		          order.setPriority_queue(priority_queue);
+		        } else {
+		          priority_queue++;
+		          order.setPriority_queue(priority_queue++);
+		        }
+		      }
+		     
 		      statement4 = connection.prepareStatement(sql);
 		      statement4.setInt(1, quantity);
 		      statement4.setDouble(2, price);
 		      statement4.setInt(3, order_id);
+		      statement4.setInt(4, order.getPriority_queue());
+		      
 		       updateorder = statement4.executeUpdate();
 		      
          if(updateorder > 0) {
@@ -250,7 +270,7 @@ public void addOrder(Order order) {
 	    }
 	  
   }
+  
  
   
 }
-
