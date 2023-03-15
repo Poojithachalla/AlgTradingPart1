@@ -3,6 +3,7 @@ package com.newproject.test;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import com.newproject.test.dao.OrderService;
 import com.newproject.test.model.Order;
 
 import jakarta.servlet.RequestDispatcher;
@@ -18,7 +19,7 @@ public class OrderEntry extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+  OrderService  service = new OrderService();
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 
@@ -33,6 +34,8 @@ public class OrderEntry extends HttpServlet {
 		order.setSide(side);
 		order.setQuantity(quantity);
 		order.setPrice(price);
+		service.addOrder(order);
+	
 
 		RequestDispatcher rd = request.getRequestDispatcher("OrderCreated.jsp");
              rd.forward(request, response);
